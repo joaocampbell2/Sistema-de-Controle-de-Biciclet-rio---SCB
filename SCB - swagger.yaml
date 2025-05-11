@@ -75,10 +75,10 @@ paths:
           description: "Erro interno no sistema"
           
   
-  /usuario/cliente/cadastraCartao:
+  /pagamento/cartao/cadastraCartao:
     post:
       tags:
-        - usuario
+        - pagamento
       description: Realiza cadastro do cartão
       operationId: cadastraCartao
       requestBody:
@@ -87,7 +87,29 @@ paths:
             schema:
                 $ref: '#/components/schemas/CartaoDeCreditoDTO'
                   
-    
+      responses:
+        '201':
+          description: "Cartão cadastrado"
+          
+        '400':
+          description: "Cartão inválido"
+          
+        '500':
+          description: "Erro interno no sistema"
+          
+          
+  /pagamento/cartao/alteraCartao:
+    put:
+      tags:
+        - pagamento
+      description: Altera Cartão
+      operationId: alteraCartao
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartaoDeCreditoDTO'
+              
       responses:
         '201':
           description: "Cartão cadastrado"
@@ -131,7 +153,23 @@ paths:
     post:
       tags:
         - email
-      description: Envia email de confiramção
+      description: Envia email de confiramção que o usuario foi criado
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailDTO'
+      responses:
+        '200':
+          description : "Email enviado"
+        '500':
+          description: "Erro interno no sistema"
+          
+  /email/enviaCartao:
+    post:
+      tags:
+        - email
+      description: Envia email de confiramção que o cartao foi inserido
       requestBody:
         content:
           application/json:
