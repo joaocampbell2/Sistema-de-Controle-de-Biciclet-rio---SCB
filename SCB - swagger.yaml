@@ -75,7 +75,7 @@ paths:
           description: "Erro interno no sistema"
           
   
-  /usuario/cliente/cadastrarCartao:
+  /usuario/cliente/cadastraCartao:
     post:
       tags:
         - usuario
@@ -95,6 +95,35 @@ paths:
         '400':
           description: "Cartão inválido"
           
+        '500':
+          description: "Erro interno no sistema"
+          
+  /usuario/cliente/editaCliente:
+    put:
+      tags:
+        - usuario
+      description: Edita cadastro do cliente
+      operationId: editaCliente
+      security:
+        - clienteAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+                $ref: '#/components/schemas/ClienteDTO'
+                  
+            encoding:
+              foto_documento:
+                contentType: image/png, image/jpeg
+        
+        
+      responses:
+        '201':
+          description: Cliente cadastrado
+        
+        '400':
+          description: "Dados inválidos"
+        
         '500':
           description: "Erro interno no sistema"
   
@@ -120,6 +149,8 @@ paths:
         - usuario
       description: Insere um novo funcionário
       operationId: insereFuncionario
+      security:
+        - funcionarioAuth: []
       requestBody:
         required: true
         content:
@@ -143,6 +174,8 @@ paths:
     post:
       tags:
         - usuario
+      security:
+        - funcionarioAuth: []
       description: Edita um novo funcionário
       operationId: editaFuncionario
       requestBody:
@@ -168,6 +201,8 @@ paths:
     post:
       tags:
         - usuario
+      security:
+        - funcionarioAuth: []
       description: Exclui um novo funcionário
       operationId: excluiFuncionario
       requestBody:
@@ -190,6 +225,15 @@ paths:
         '500':
           description: Erro interno no sistema
 components:
+  securitySchemes:
+    clienteAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    funcionarioAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     ClienteDTO:
       type: object
@@ -213,7 +257,7 @@ components:
           type: string
           format: binary
         passaporte:
-          $ref: '#/components/schemas/Passaporte'
+          $ref: '#/components/schemas/PassaporteDTO'
       oneOf:
         - required: [cpf]
           properties:
@@ -223,7 +267,7 @@ components:
           properties:
             brasileiro:
               enum: [false]
-    Passaporte:
+    PassaporteDTO:
       type: object
       properties:
         pais:
