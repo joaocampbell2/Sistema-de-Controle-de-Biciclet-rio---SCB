@@ -1,101 +1,197 @@
 openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/unirio-ca4/bike/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/unirio-ca4/boke/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/unirio-e61/VaDeBike/1.0.0
 info:
+  version: 1.0.0
   title: bike
   description: Bicicletário
-  version: 1.0.0
-servers:
-- url: https://virtserver.swaggerhub.com/unirio-ca4/boke/1.0.0
-  description: SwaggerHub API Auto Mocking
-- url: https://virtserver.swaggerhub.com/unirio-e61/VaDeBike/1.0.0
-  description: SwaggerHub API Auto Mocking
 tags:
-- name: usuario
-  description: Lida com interações relacionadas aos usuarios do sistema
-- name: equipamento
-  description: Gerencia o equipamento do sistema
-- name: pagamento
-  description: Lida com requisições de pagamento
-- name: email
-  description: Envia e-mail ao cliente
+  - name: usuario
+    description: Lida com interações relacionadas aos usuarios do sistema
+  - name: equipamento
+    description: Gerencia o equipamento do sistema
+  - name: pagamento
+    description: Lida com requisições de pagamento
+  - name: email
+    description: Envia e-mail ao cliente
 paths:
+ # /usuario/cliente/cadastrarUsuario:
+   # post:
+   #   tags:
+   #     - usuario
+  #    description: Realiza cadastro do cliente
+    #  operationId: cadastraCliente
+   #   requestBody:
+     #   content:
+   #       multipart/form-data:
+     #       schema:
+    #          allOf:
+     #         #cartao de credito vai ter uma tabela separada no banco?
+    #            - $ref: '#/components/schemas/ClienteDTO'
+    #              
+    #            - $ref: '#/components/schemas/CartaoDeCreditoDTO'
+     #           
+      #      encoding:
+     #         foto_documento:
+       #         contentType: image/png, image/jpeg
+    #  responses:
+     #   '201':
+      #    description: Cliente cadastrado
+     #     content:
+       #     application/json:
+       #       schema:
+        #        $ref: '#/components/schemas/ClienteDTO'
+  
+  
+  /usuario/cliente/cadastrarUsuario:
+    post:
+      tags:
+        - usuario
+      description: Realiza cadastro do cliente
+      operationId: cadastraCliente
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+                $ref: '#/components/schemas/ClienteDTO'
+                  
+            encoding:
+              foto_documento:
+                contentType: image/png, image/jpeg
+      responses:
+        '201':
+          description: Cliente cadastrado
+          
+        '400':
+          description: "Dados inválidos"
+          
+        '500':
+          description: "Erro interno no sistema"
+          
+  
+  /usuario/cliente/cadastrarCartao:
+    post:
+      tags:
+        - usuario
+      description: Realiza cadastro do cartão
+      operationId: cadastraCartao
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/CartaoDeCreditoDTO'
+                  
+    
+      responses:
+        '201':
+          description: "Cartão cadastrado"
+          
+        '400':
+          description: "Cartão inválido"
+          
+        '500':
+          description: "Erro interno no sistema"
+  
+  /email/enviaConfirmacao:
+    post:
+      tags:
+        - email
+      description: Envia email de confiramção
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailDTO'
+      responses:
+        '200':
+          description : "Email enviado"
+        '500':
+          description: "Erro interno no sistema"
+  
   /usuario/funcionario/insereFuncionario:
     post:
       tags:
-      - usuario
+        - usuario
       description: Insere um novo funcionário
       operationId: insereFuncionario
       requestBody:
+        required: true
         content:
           aplication/json:
             schema:
               $ref: '#/components/schemas/FuncionarioDTO'
-        required: true
       responses:
-        "201":
-          description: "Funcionário editado, retorna lista de funcionários"
+        '201':
+          description: Funcionário editado, retorna lista de funcionários
           content:
             aplication/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/FuncionarioDTO'
-        "400":
-          description: Funcionario não inserido
-        "500":
-          description: Erro interno no sistema
+        '400':
+          description: "Dados inválidos"
+        '500':
+          description: "Erro interno no sistema"
   /usuario/funcionario/editaFuncionario:
     post:
       tags:
-      - usuario
+        - usuario
       description: Edita um novo funcionário
       operationId: editaFuncionario
       requestBody:
+        required: true
         content:
           aplication/json:
             schema:
               $ref: '#/components/schemas/FuncionarioDTO'
-        required: true
       responses:
-        "201":
-          description: "Funcionário editado, retorna lista de funcionários"
+        '201':
+          description: Funcionário editado, retorna lista de funcionários
           content:
             aplication/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/FuncionarioDTO'
-        "400":
+        '400':
           description: Funcionario não inserido
-        "500":
+        '500':
           description: Erro interno no sistema
   /usuario/funcionario/excluiFuncionario:
     post:
       tags:
-      - usuario
+        - usuario
       description: Exclui um novo funcionário
       operationId: excluiFuncionario
       requestBody:
+        required: true
         content:
           aplication/json:
             schema:
               $ref: '#/components/schemas/MatriculaDTO'
-        required: true
       responses:
-        "204":
-          description: "Funcionário excluído, retorna lista de funcionários"
+        '204':
+          description: Funcionário excluído, retorna lista de funcionários
           content:
             aplication/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/FuncionarioDTO'
-        "400":
+        '400':
           description: Funcionario não encontrado
-        "500":
+        '500':
           description: Erro interno no sistema
 components:
   schemas:
-    DadosCliente:
+    ClienteDTO:
       type: object
       properties:
         nome:
@@ -106,65 +202,70 @@ components:
           type: string
         cpf:
           type: string
+          format: /d[11]
         data_nascimento:
           type: string
           format: date
-        nacionalidade:
-          type: string
-          enum:
-          - Estrangeiro
-          - Brasileiro
+        brasileiro:
+          type: boolean
+          description: if true brasileiro else estrangeiro
         foto_documento:
           type: string
-          format: base64
+          format: binary
         passaporte:
-          allOf:
-          - $ref: '#/components/schemas/Passaporte'
+          $ref: '#/components/schemas/Passaporte'
+      oneOf:
+        - required: [cpf]
+          properties:
+            brasileiro:
+              enum: [true]
+        - required: [passaporte]
+          properties:
+            brasileiro:
+              enum: [false]
     Passaporte:
       type: object
       properties:
         pais:
-          pattern: "[A-Z]{2}"
+          pattern: '[A-Z]{2}'
           type: string
         numero:
           type: string
         data-validade:
           type: string
           format: date
-    CartaoDeCredito:
+    CartaoDeCreditoDTO:
       type: object
       properties:
         numero:
           type: string
-          format: "/d{16}"
+          format: /d{16}
         nome:
           type: string
         codigo-seguranca:
           type: string
-          format: "/d{3,4}"
+          format: /d{3,4}
         data-validade:
           type: string
           format: date
-    Cliente:
-      allOf:
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-          foto_documento:
-            type: string
-          status:
-            type: string
-            format: "enum['ATIVO', 'INATIVO', 'CONFIRMACAO_PENDENTE']"
-      - $ref: '#/components/schemas/DadosCliente'
+        cpf:
+          type: string
+          format: /d[11]
+        
+    #Cliente:
+    #  allOf:
+     #   - type: object
+     #     properties:
+     #       id:
+      #        type: string
+      #        format: uuid
+       #     foto_documento:
+      #        type: string
+      #      status:
+       #       type: string
+       #       format: enum['ATIVO', 'INATIVO', 'CONFIRMACAO_PENDENTE']
+      #  - $ref: '#/components/schemas/ClienteDTO'
     FuncionarioDTO:
-      required:
-      - email
-      - funcao
-      - idade
-      - matricula
-      - nome
       type: object
       properties:
         matricula:
@@ -172,7 +273,7 @@ components:
           example: INSERIR EXEMPLO
         email:
           type: string
-          example: email@dominio.com
+          example: xxxx@dominio
         nome:
           type: string
           example: Arthur Campbell
@@ -181,11 +282,23 @@ components:
           example: 18
         funcao:
           type: string
-          format: "enum['administrativo', 'reparador']"
+          format: enum['administrativo', 'reparador']
           example: administrativo
+      required:
+        - matricula
+        - email
+        - nome
+        - idade
+        - funcao
     MatriculaDTO:
       type: object
       properties:
         matricula:
           type: string
           example: INSERIR EXEMPLO DE MATRICULA
+    EmailDTO:
+      type: object
+      properties:
+        email:
+          type: string
+          example: xxxx@dominio
