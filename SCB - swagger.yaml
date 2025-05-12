@@ -262,6 +262,154 @@ paths:
           description: Funcionario não encontrado
         '500':
           description: Erro interno no sistema
+  /cadastraBicicleta:
+    post:
+      tags:
+      - equipamento
+      summary: Cadastramento de bicicleta no sistema.
+      operationId: criarBicicleta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CriaBicicletaDTO'
+      responses:
+        '201':
+          description: Bicicleta cadastrada com sucesso.
+        '422':
+          description: Dados inválidos.
+  /bicicletas:       
+    get:
+      tags:
+      - equipamento
+      summary: Retorna as bicicletas.
+      operationId: retornarBicicletas
+      responses:
+        '200':
+          description: Bicicletas retornadas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListaBicicletaDTO'
+  /bicicleta/{bicicletaId}:
+    get:
+      tags:
+      - equipamento
+      summary: Retorna a bicicleta desejada.
+      operationId: retornarBicicleta
+      parameters:
+        - name: bicicletaId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bicicleta retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaBicicletaDTO'
+        '404':
+          description: Bicicleta não existe.
+    put:
+      tags:
+        - equipamento
+      summary: Alteração dos dados da bicicleta.
+      operationId: alterarDadosBicicleta
+      parameters:
+        - name: bicicletaId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/EditaBicicletaDTO'
+      responses:
+        '200':
+          description: Dados do bicicleta alterado com sucesso
+        '404':
+          description: Bicicleta não existe.
+        '422':
+          description: Dados inválidos.
+    delete:
+      tags:
+      - equipamento
+      summary: Remoção de bicicleta de.
+      operationId: removerBicicleta
+      parameters:
+        - name: bicicletaId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bicicleta deletada com sucesso.
+        '404':
+          description: Bicicleta não encontrada.
+          
+  /alugarBicicleta/{trancaId}:
+    post:
+      tags:
+        - equipamento
+      summary: Aluguel da bicicleta.
+      operationId: alugarBicicleta
+      parameters:
+        - name: trancaId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bicicleta alugada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AluguelBicicletaDTO'
+        '400':
+          description: Tranca não existe.
+        '409':
+          description: Ciclista já possui um aluguel
+          
+  /devolverBicicleta:
+    post:
+      tags:
+        - equipamento
+      summary: Devolução da bicicleta.
+      operationId: devolucaoBicicleta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                reparo_solicitado:
+                  type: boolean
+      responses:
+        '200':
+          description: Bicicleta devolvida com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DevolveBicicletaDTO'
+        '404':
+          description: Você não possui bicicleta para devolver        
 components:
   securitySchemes:
     clienteAuth:
@@ -384,3 +532,56 @@ components:
         email:
           type: string
           example: xxxx@dominio
+    AluguelBicicletaDTO:
+      type: object
+      properties:
+        numero_bicicleta:
+          type: integer
+        data_inicio:
+          type: string
+          format: datetime   
+    DevolveBicicletaDTO:
+      allOf:
+        - $ref: '#/components/schemas/AluguelBicicletaDTO'
+        - type: object
+          properties:
+            numero_tranca:
+              type: integer
+            data_fim:
+              type: string
+              format: datetime
+    CriaBicicletaDTO:
+      type: object
+      properties:
+        marca:
+          type: string
+        modelo:
+          type: string
+        ano:
+          type: string
+          format: year
+        status:
+          type: string
+    ListaBicicletaDTO:
+      allOf:
+      - type: object
+        properties:
+          numero_bicicleta:
+            type: string
+          localizacao:
+            type: string
+            format: coordinates
+          status:
+            type: string
+            format: enum['NOVA', 'DISPONÍVEL', 'EM_USO', 'REPARO_SOLICITADO', 'EM_REPARO', 'APOSENTADA']
+      - $ref: '#/components/schemas/CriaBicicletaDTO'
+    EditaBicicletaDTO:
+      type: object
+      properties:
+        marca:
+          type: string
+        modelo:
+          type: string
+        ano:
+          type: string
+          format: year
