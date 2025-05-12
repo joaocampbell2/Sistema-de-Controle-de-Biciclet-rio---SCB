@@ -79,6 +79,8 @@ paths:
     post:
       tags:
         - pagamento
+      security:
+        - clienteAuth: []
       description: Realiza cadastro do cartão
       operationId: cadastraCartao
       requestBody:
@@ -97,11 +99,35 @@ paths:
         '500':
           description: "Erro interno no sistema"
           
+  
+  /pagamento/pagar:
+    post:
+      tags:
+        - pagamento
+      description: Confirma um pagamento
+      operationId: pagar
+      security:
+        - clienteAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PagamentoDTO'
+      responses:
+        "200":
+          description: "Pagamento efetuado"
+          
+        "400":
+          description: "Pagamento não foi concluído"
+      
+    
           
   /pagamento/cartao/{id}:
     put:
       tags:
         - pagamento
+      security:
+        - clienteAuth: []
       description: Altera Cartão
       operationId: alteraCartao
       parameters:
@@ -287,7 +313,8 @@ paths:
           description: Funcionario não encontrado
         '500':
           description: Erro interno no sistema
-  /cadastraBicicleta:
+  
+  /equipamento/bicicleta/cadastra:
     post:
       tags:
       - equipamento
@@ -297,14 +324,14 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/CriaBicicletaDTO'
+                $ref: '#/components/schemas/CriaBicicletaDTO'
       responses:
         '201':
           description: Bicicleta cadastrada com sucesso.
         '422':
           description: Dados inválidos.
-  /bicicletas:       
+  
+  /equipamento/bicicleta/bicicletas:       
     get:
       tags:
       - equipamento
@@ -319,7 +346,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ListaBicicletaDTO'
-  /bicicleta/{bicicletaId}:
+  /equipamento/bicicleta/{bicicletaId}:
     get:
       tags:
       - equipamento
@@ -387,33 +414,39 @@ paths:
         '404':
           description: Bicicleta não encontrada.
           
-  /alugarBicicleta/{trancaId}:
+  /equipamento/bicicleta/alugar/{trancaId}:
     post:
       tags:
         - equipamento
       summary: Aluguel da bicicleta.
       operationId: alugarBicicleta
+      security:
+        - clienteAuth: []
       parameters:
         - name: trancaId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
       responses:
         '200':
           description: Bicicleta alugada com sucesso.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AluguelBicicletaDTO'
         '400':
-          description: Tranca não existe.
+          description:  |
+              Erro de validação. Possíveis mensagens:
+              - "Tranca não existe."
+              - "Bicicleta não existe nessa tranca."
+              - "Erro no pagamento"
+              - "Bicicleta em reparo"
+              
         '409':
-          description: Ciclista já possui um aluguel
+          description: "Ciclista já possui um aluguel"
+        '500':
+          description: "Erro no sistema, tranca não responde"
+
+      
           
-  /devolverBicicleta:
+  /equipamento/bicicleta/devolver:
     post:
       tags:
         - equipamento
@@ -609,4 +642,16 @@ components:
           type: string
         ano:
           type: string
-          format: year      
+          format: year
+    
+    PagamentoDTO:
+      type: object
+      
+      properties:
+        valor:
+          type: number
+        equipamentoID:
+          type: number
+        
+    
+    
