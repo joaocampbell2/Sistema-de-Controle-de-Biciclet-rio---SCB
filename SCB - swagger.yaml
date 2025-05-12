@@ -98,12 +98,20 @@ paths:
           description: "Erro interno no sistema"
           
           
-  /pagamento/cartao/alteraCartao:
+  /pagamento/cartao/{id}:
     put:
       tags:
         - pagamento
       description: Altera Cartão
       operationId: alteraCartao
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -120,12 +128,20 @@ paths:
         '500':
           description: "Erro interno no sistema"
           
-  /usuario/cliente/editaCliente:
+  /usuario/cliente/{id}:
     put:
       tags:
         - usuario
       description: Edita cadastro do cliente
       operationId: editaCliente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       security:
         - clienteAuth: []
       requestBody:
@@ -208,14 +224,22 @@ paths:
           description: "Dados inválidos"
         '500':
           description: "Erro interno no sistema"
-  /usuario/funcionario/editaFuncionario:
-    post:
+  /usuario/funcionario/{id}:
+    put:
       tags:
         - usuario
       security:
         - funcionarioAuth: []
       description: Edita um novo funcionário
       operationId: editaFuncionario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -235,20 +259,21 @@ paths:
           description: Funcionario não inserido
         '500':
           description: Erro interno no sistema
-  /usuario/funcionario/excluiFuncionario:
-    post:
+    delete:
       tags:
         - usuario
       security:
         - funcionarioAuth: []
       description: Exclui um novo funcionário
       operationId: excluiFuncionario
-      requestBody:
-        required: true
-        content:
-          aplication/json:
-            schema:
-              $ref: '#/components/schemas/MatriculaDTO'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         '204':
           description: Funcionário excluído, retorna lista de funcionários
@@ -584,4 +609,4 @@ components:
           type: string
         ano:
           type: string
-          format: year
+          format: year      
