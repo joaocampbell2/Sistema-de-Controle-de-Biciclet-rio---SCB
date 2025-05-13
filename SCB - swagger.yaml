@@ -1,6 +1,9 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/unir-542/second/1.0.0
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/unirio-ca4/bike/1.0.0
   - description: SwaggerHub API Auto Mocking
@@ -572,7 +575,66 @@ paths:
           description: Cobrança criada
         '500':
           description: Erro ao criar cobranca
-      
+          
+  /email/enviaDadosRetirada:
+    post:
+      tags:
+        - email
+      summary: Envia dados para o reparador.
+      operationId: dadosBicicleta
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/DadosRetiradaDTO'
+      responses:
+        '200':
+          description: Email enviado com sucesso.
+        '500':
+          description: Erro ao enviar email.
+          
+  /email/enviaDadosDevolucao:
+    post:
+      tags:
+        - email
+      summary: Envia dados de devolução da bicicleta.
+      operationId: dadosDevolucao
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/DevolveBicicletaDTO'
+      responses:
+        '200':
+          description: Email enviado com sucesso.
+        '500':
+          description: Erro ao enviar email.    
+          
+  /equipamento/reparoBicicleta{bicicletaId}:
+    put: 
+      tags:
+        - equipamento
+      summary: Mudança do status da bicicleta para “reparo solicitado”.
+      operationId: reparoBicicleta
+      parameters:
+        - name: bicicletaId
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              $ref: '#/components/schemas/ReparoDTO'
+      responses:
+        '201':
+          description: Status alterado.
+        '400':
+          description: Erro na alteração.
 components:
   securitySchemes:
     clienteAuth:
@@ -785,3 +847,19 @@ components:
           type: number
         equipamentoID:
           type: number
+          
+    DadosRetiradaDTO:
+      type: object
+      properties:
+          retirada_tranca:
+            type: string
+            format: datetime
+          funcionarioID:
+            type: integer
+          numero_bicicleta:
+            type: string
+    ReparoDTO:
+      type: object
+      properties:
+        status:
+          type: string
