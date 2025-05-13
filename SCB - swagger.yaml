@@ -191,6 +191,8 @@ paths:
         
         '500':
           description: "Erro interno no sistema"
+  
+                      # possui-aluguel
   /usuario/cliente/{id}/possui-aluguel-ativo:
     get:
       tags:
@@ -393,7 +395,8 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ListaBicicletaDTO'
+                  $ref: '#/components/schemas/BicicletaDTO'
+                  
   /equipamento/bicicleta/{bicicletaId}:
     get:
       tags:
@@ -414,7 +417,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListaBicicletaDTO'
+                type: array
+                items:
+                  $ref: '#/components/schemas/BicicletaDTO'
         '404':
           description: Bicicleta não existe.
     put:
@@ -435,7 +440,7 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/EditaBicicletaDTO'
+              - $ref: '#/components/schemas/CriaBicicletaDTO'
       responses:
         '200':
           description: Dados do bicicleta alterado com sucesso
@@ -446,7 +451,7 @@ paths:
     delete:
       tags:
         - equipamento
-      summary: Remoção de bicicleta de.
+      summary: Remoção de bicicleta
       operationId: removerBicicleta
       parameters:
         - name: bicicletaId
@@ -461,6 +466,7 @@ paths:
           description: Bicicleta deletada com sucesso.
         '404':
           description: Bicicleta não encontrada.
+  
   /usuario/cliente/alugar:
     post:
       tags:
@@ -477,6 +483,8 @@ paths:
       responses:
         '200':
           description: Aluguel registrado
+          #precisa de retorno?
+          
           content:
             application/json:
               schema:
@@ -519,6 +527,8 @@ paths:
         - equipamento
       summary: Devolução da bicicleta.
       operationId: devolucaoBicicleta
+      
+      #pq um body e nao um parametro?
       requestBody:
         content:
           application/json:
@@ -529,10 +539,16 @@ paths:
       responses:
         '200':
           description: Bicicleta devolvida com sucesso.
+          
+          #precisa de retoorno? sim mas é pro sistema de pagamento
+          
+          
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DevolveBicicletaDTO'
+                
+                #$ref: '#/components/schemas/PagamentoDTO'
         '404':
           description: Você não possui bicicleta para devolver
           
@@ -554,6 +570,7 @@ paths:
         '500':
           description: Erro ao retornar funcionarios
           
+  #precisa dessa funcao?       
   /pagamento/cobrancaPosterior:
     post:
       tags:
@@ -562,6 +579,7 @@ paths:
       operationId: Criar cobranca posterior
       requestBody:
         content:
+          #deveria ser um DTO
           application/json:
             schema:
               type: object
@@ -720,20 +738,7 @@ components:
         cpf:
           type: string
           format: /d[11]
-        
-    #Cliente:
-    #  allOf:
-     #   - type: object
-     #     properties:
-     #       id:
-      #        type: string
-      #        format: uuid
-       #     foto_documento:
-      #        type: string
-      #      status:
-       #       type: string
-       #       format: enum['ATIVO', 'INATIVO', 'CONFIRMACAO_PENDENTE']
-      #  - $ref: '#/components/schemas/ClienteDTO'
+
     FuncionarioDTO:
       type: object
       properties:
@@ -759,12 +764,7 @@ components:
         - nome
         - idade
         - funcao
-    MatriculaDTO:
-      type: object
-      properties:
-        matricula:
-          type: string
-          example: INSERIR EXEMPLO DE MATRICULA
+
     EmailDTO:
       type: object
       properties:
@@ -785,7 +785,9 @@ components:
           type: integer
         id_cliente:
           type: integer
-          
+    
+    
+    #pq nao idTrancaDTO nomezao da porra
     CriaAluguelInicialBicicletaDTO:
       type: object
       properties:
@@ -827,32 +829,25 @@ components:
         ano:
           type: string
           format: year
-        status:
-          type: string
-    ListaBicicletaDTO:
-      allOf:
-      - type: object
+  
+    BicicletaDTO:
         properties:
-          numero_bicicleta:
+          marca:
             type: string
+          modelo:
+            type: string
+          ano:
+            type: string
+            format: year
+          numero_bicicleta:
+              type: string
           localizacao:
             type: string
             format: coordinates
           status:
             type: string
             format: enum['NOVA', 'DISPONÍVEL', 'EM_USO', 'REPARO_SOLICITADO', 'EM_REPARO', 'APOSENTADA']
-      - $ref: '#/components/schemas/CriaBicicletaDTO'
-    EditaBicicletaDTO:
-      type: object
-      properties:
-        marca:
-          type: string
-        modelo:
-          type: string
-        ano:
-          type: string
-          format: year
-    
+      
     PagamentoDTO:
       type: object
       
