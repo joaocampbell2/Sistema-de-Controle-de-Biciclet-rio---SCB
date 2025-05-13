@@ -179,8 +179,6 @@ paths:
             encoding:
               foto_documento:
                 contentType: image/png, image/jpeg
-        
-        
       responses:
         '201':
           description: Cliente cadastrado
@@ -190,6 +188,33 @@ paths:
         
         '500':
           description: "Erro interno no sistema"
+    get:
+    #possivelmente alterar o path
+      tags:
+        - usuario
+      description: Verificar se cliente possui bicicleta alugada
+      operationId: verificaAluguel
+      parameters: 
+        - name: id
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      security: 
+        - clienteAuth: []
+      responses:
+        '200':
+          description: JSON com valor booleano indicando se possui aluguel(true se possui)
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: 'Cliente não existe'
+          
+      
   
   /email/enviaConfirmacao:
     post:
@@ -222,6 +247,24 @@ paths:
           description : "Email enviado"
         '500':
           description: "Erro interno no sistema"
+          
+  /email/enviaDadosAluguel:
+    post:
+      tags:
+        - email
+      description: Envia email confirmando novo aluguel com informações sobre o aluguel
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/AluguelBicicletaDTO'
+      responses:
+        '200':
+          description: 'Email enviado com sucesso'
+        '500':
+          description: 'Erro ao enviar email'
+          
+        
   
   /usuario/funcionario/insereFuncionario:
     post:
@@ -241,7 +284,7 @@ paths:
         '201':
           description: Funcionário editado, retorna lista de funcionários
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: array
                 items:
@@ -313,6 +356,8 @@ paths:
           description: Funcionario não encontrado
         '500':
           description: Erro interno no sistema
+
+  
   
   /equipamento/bicicleta/cadastra:
     post:
@@ -397,7 +442,7 @@ paths:
           description: Dados inválidos.
     delete:
       tags:
-      - equipamento
+        - equipamento
       summary: Remoção de bicicleta de.
       operationId: removerBicicleta
       parameters:
@@ -413,8 +458,28 @@ paths:
           description: Bicicleta deletada com sucesso.
         '404':
           description: Bicicleta não encontrada.
+  /usuario/cliente/alugar:
+    post:
+      tags:
+        - usuario
+      description: Registrar novo aluguel
+      operationId: registraAluguel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriaAluguelDTO'
+      security:
+        - clienteAuth: []
+      responses:
+        '200':
+          description: Aluguel registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AluguelBicicletaDTO'
           
-  /equipamento/bicicleta/alugar/{trancaId}:
+  /equipamento/bicicleta/alugar:
     post:
       tags:
         - equipamento
@@ -422,12 +487,11 @@ paths:
       operationId: alugarBicicleta
       security:
         - clienteAuth: []
-      parameters:
-        - name: trancaId
-          in: path
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriaAluguelInicialBicicletaDTO'
       responses:
         '200':
           description: Bicicleta alugada com sucesso.
@@ -593,11 +657,41 @@ components:
     AluguelBicicletaDTO:
       type: object
       properties:
-        numero_bicicleta:
+        id_bicicleta:
           type: integer
         data_inicio:
           type: string
-          format: datetime   
+          format: datetime
+        id_totem:
+          type: integer
+        valor_centavos:
+          type: integer
+        id_cliente:
+          type: integer
+          
+    CriaAluguelInicialBicicletaDTO:
+      type: object
+      properties:
+        id_tranca:
+          type: integer
+        id_cliente:
+          type: integer
+          
+    CriaAluguelDTO:
+      type: object
+      properties:
+        id_tranca:
+          type: integer
+        id_cliente:
+          type: integer
+        id_bicicleta:
+          type: integer
+        data_hora:
+          type: string
+          format: date-time
+        cartao_usado:
+          $ref: '#/components/schemas/CartaoDeCreditoDTO'
+        
     DevolveBicicletaDTO:
       allOf:
         - $ref: '#/components/schemas/AluguelBicicletaDTO'
@@ -652,6 +746,3 @@ components:
           type: number
         equipamentoID:
           type: number
-        
-    
-    
