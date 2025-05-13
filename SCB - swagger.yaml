@@ -189,7 +189,6 @@ paths:
         '500':
           description: "Erro interno no sistema"
     get:
-    #possivelmente alterar o path
       tags:
         - usuario
       description: Verificar se cliente possui bicicleta alugada
@@ -531,7 +530,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/DevolveBicicletaDTO'
         '404':
-          description: Você não possui bicicleta para devolver        
+          description: Você não possui bicicleta para devolver
+          
+  /usuario/funcionario:
+    get:
+      tags:
+        - usuario
+      description: Retorna todos os funcionarios
+      operationId: getFuncionarios
+      responses:
+        '200':
+          description: Lista de funcionários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FuncionarioDTO'
+        '500':
+          description: Erro ao retornar funcionarios
+          
+  /pagamento/cobrancaPosterior:
+    post:
+      tags:
+        - pagamento
+      description: Registrar pagamento para ser cobrado posteriormente
+      operationId: Criar cobranca posterior
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                valor:
+                  type: integer
+                data:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Cobrança criada
+        '500':
+          description: Erro ao criar cobranca
+      
 components:
   securitySchemes:
     clienteAuth:
@@ -673,8 +714,6 @@ components:
       type: object
       properties:
         id_tranca:
-          type: integer
-        id_cliente:
           type: integer
           
     CriaAluguelDTO:
