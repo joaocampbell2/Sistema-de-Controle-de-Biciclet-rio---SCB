@@ -1,4 +1,5 @@
 openapi: 3.0.0
+swagger: '2.0'
 servers:
   # Added by API Auto Mocking Plugin
   # Added by API Auto Mocking Plugin
@@ -52,7 +53,6 @@ paths:
     post:
       tags:
         - usuario
-      description: 
       security: 
         - funcionarioAuth: []
       requestBody:
@@ -159,37 +159,33 @@ paths:
         '400':
           description: Erro ao aposentar bicicleta.
           
-  /equipamento/listarTrancas{totemId}:
+  /equipamento/toten/listar-totens:
     get: 
       tags:
         - equipamento
-      summary: Listar trancas associadas a um totem.
-      operationId: listarTrancas
-      parameters:
-        - name: totemId
-          in: path
-          required: true
-          schema:
-            type: string
+      summary: Listar todos os totens cadastrados.
+      operationId: listarTotens
+      
       responses:
         '200': 
-          description: Lista de tranca do totem.
+          description: Lista de totens retornada com sucesso.
           content:
             application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/TrancaDTO'
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TotenDTO'
         '400':
           description: Erro ao Listar Trancas.
           
-  /equipamento/totem/cadastra:
+  /equipamento/toten/cadastrar:
    post: 
       tags:
         - equipamento
+      security: 
+        - funcionarioAuth: []
       summary: Cadastrar novo Totem.
-      operationId: cadastrarTotem
-      parameters:
+      operationId: criaToten
       requestBody:
         required: true
         content:
@@ -198,17 +194,36 @@ paths:
                $ref: '#/components/schemas/CriaTotenDTO'
       
       responses:
-        '200': 
+        '201': 
           description: Cadastrado com sucesso.
           content:
             application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CriaTotenDTO:'
+              schema:
+                type: object
+                allOf:
+                  $ref: '#/components/schemas/CriaTotenDTO'
+        '422': 
+          description: Dados inválidos.
        
-          
-  /equipamento/
+  /equipamento/toten/{idToten}:
+    delete:
+      tags:
+        - equipamento
+      security: 
+        - funcionarioAuth: []
+      summary: Remover Toten
+      operationId: removeToten
+      parameters:
+        - name: idToten
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Toten deletada com sucesso.
+        '404':
+          description: Toten não existe.
 
   /funcionario/envia-dados-retirada:
     post:
@@ -522,17 +537,21 @@ components:
     CriaTotenDTO:
       type: object
       properties:
-        numero:
-         type: integer
-        status:
-          type: boolean
-        localizacao: 
+        localizacao:
           type: string
-          format: coordinates
-        ano:
+          format: cordinates
+        desccricao:
+        type: string
+          
+    TotenDTO: 
+      type: object
+      properties:
+        numero-toten:
+          type: number
+        localizacao:
           type: string
-          format: year
-        modelo:
+          format: cordinates
+        descricao:
           type: string
           
     BicicletaTokenDTO:
