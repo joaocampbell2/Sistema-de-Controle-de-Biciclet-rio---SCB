@@ -27,7 +27,7 @@ tags:
   - name: aluguel
     description: Gerencia os aluguéis
 paths:
-    /equipamento/tranca/incluir:
+  /equipamento/tranca/incluir:
     post:
       tags:
         - equipamento
@@ -138,7 +138,34 @@ paths:
           description: Email enviado com sucesso.
         '500':
           description: Erro ao enviar email.
-
+  
+  /pagamento/cobrar-atrasos:
+    post:
+      tags:
+        - pagamento
+      summary: Cobra taxas atrasadas
+      operationId: cobrarAtrasos
+      responses:
+        '200':
+          description: Todos os usuarios com atraso devidamente cobrados.
+        '207':
+          description: Nem todos os usuários com atraso puderam ser cobrados.
+        '500':
+          description: Falha interna do servidor
+          
+  /usuario/email-atraso:
+    post:
+      tags:
+        - usuario
+      summary: Envia email com dados de cobrança de atraso
+      operationId: enviaAtraso
+      responses:
+        '200':
+          description: Email enviado com sucesso
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Falha do servidor
 components:
   securitySchemes:
     clienteAuth:
@@ -378,3 +405,14 @@ components:
       properties:
         status:
           type: string
+          
+    CobrancaDTO:
+      type: object
+      properties:
+        data-hora:
+          type: string
+          format: datetime
+        valor-extra:
+          type: number
+        cartao-de-credito:
+          $ref: '#/components/schemas/CartaoDeCreditoDTO'
