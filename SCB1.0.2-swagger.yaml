@@ -51,6 +51,7 @@ paths:
     post:
       tags:
         - usuario
+      description: 
       security: 
         - funcionarioAuth: []
       requestBody:
@@ -121,6 +122,57 @@ paths:
           description: Bicicleta aposentada com sucesso.
         '400':
           description: Erro ao aposentar bicicleta.
+          
+  /equipamento/listarTrancas{totemId}:
+    get: 
+      tags:
+        - equipamento
+      summary: Listar trancas associadas a um totem.
+      operationId: listarTrancas
+      parameters:
+        - name: totemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Lista de tranca do totem.
+          content:
+            application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TrancaDTO'
+        '400':
+          description: Erro ao Listar Trancas.
+          
+  /equipamento/totem/cadastra:
+   post: 
+      tags:
+        - equipamento
+      summary: Cadastrar novo Totem.
+      operationId: cadastrarTotem
+      parameters:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/CriaTotenDTO'
+      
+      responses:
+        '200': 
+          description: Cadastrado com sucesso.
+          content:
+            application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CriaTotenDTO:'
+       
+          
+  /equipamento/
 
   /funcionario/envia-dados-retirada:
     post:
@@ -138,6 +190,8 @@ paths:
           description: Email enviado com sucesso.
         '500':
           description: Erro ao enviar email.
+          
+  
 
 components:
   securitySchemes:
@@ -317,6 +371,23 @@ components:
         data:
           type: string
           format: date
+          
+    CriaTotenDTO:
+      type: object
+      properties:
+        numero:
+         type: integer
+        status:
+          type: boolean
+        localizacao: 
+          type: string
+          format: coordinates
+        ano:
+          type: string
+          format: year
+        modelo:
+          type: string
+        
     
     CriaBicicletaDTO:
       type: object
