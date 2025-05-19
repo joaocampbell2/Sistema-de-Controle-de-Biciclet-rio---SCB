@@ -27,17 +27,18 @@ tags:
   - name: aluguel
     description: Gerencia os aluguéis
 paths:
-    /equipamento/tranca/incluir:
+  /equipamento/tranca/incluir-token:
     post:
       tags:
         - equipamento
       security: 
         - funcionarioAuth: []
+        
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrancaDTO'
+              $ref: '#/components/schemas/TrancaTokenDTO'
   
       responses:
         '201':
@@ -47,7 +48,7 @@ paths:
         '404':
           description: "Número de tranca inválida"
         
-  /usuario/funcionario/email-tranca:
+  /usuario/funcionario/email-tranca-token:
     post:
       tags:
         - usuario
@@ -57,14 +58,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrancaDTO'
+              $ref: '#/components/schemas/TrancaTokenDTO'
   
       responses:
         '200':
           description: "Email enviado"
         '500':
           description: "Não foi possívem enviar email"
-          
   /cliente/confirmar-email/token={token}:
     put:
       tags:
@@ -86,6 +86,42 @@ paths:
           
         '500':
           description: "Erro interno no sistema"
+  /equipamento/bicicleta/incluir-token:
+    post:
+      tags:
+        - equipamento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BicicletaTokenDTO"
+      responses:
+        '201':
+          description: "Bicicleta incluída"
+        '400':
+          description: "Somente o funcionário responsável pelo reparo pode devolver a bicicleta"
+        '404':
+          description: "Número de bicicleta inválida"
+        
+  /usuario/funcionario/email-bicicleta-token:
+    post:
+      tags:
+        - usuario
+      security: 
+        - funcionarioAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BicicletaTokenDTO'
+  
+      responses:
+        '200':
+          description: "Email enviado"
+        '500':
+          description: "Não foi possívem enviar email"  
+  
+  
   /equipamento/reparar-bicicleta{trancaId}:
     put: 
       tags:
@@ -307,13 +343,23 @@ components:
             data_fim:
               type: string
               format: datetime
-    TrancaDTO:
+    TrancaTokenDTO:
       type: object
       properties:
         numero-tranca:
           type: string
         matricula-reparador:
           type: string
+        data:
+          type: string
+          format: date
+    BicicletaTokenDTO:
+      type: object
+      properties:
+        numero-bicicleta:
+          type: number
+        numero-tranca:
+          type: number
         data:
           type: string
           format: date
