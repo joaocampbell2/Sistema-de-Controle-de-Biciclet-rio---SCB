@@ -48,6 +48,58 @@ paths:
           
         '500':
           description: "Erro interno no sistema"
+  /equipamento/repararBicicleta{trancaId}:
+    put: 
+      tags:
+        - equipamento
+      summary: Mudança do status da bicicleta para “reparo solicitado”.
+      operationId: reparoBicicleta
+      parameters:
+        - name: trancaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Bicicleta retirada para reparo.
+        '400':
+          description: Erro ao retirar bicicleta para reparo.
+
+  /equipamento/aposentarBicicleta{trancaId}:
+    put: 
+      tags:
+        - equipamento
+      summary: Mudança do status da bicicleta para “aposentada”.
+      operationId: aposentarBicicleta
+      parameters:
+        - name: trancaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Bicicleta aposentada com sucesso.
+        '400':
+          description: Erro ao aposentar bicicleta.
+
+  /funcionario/enviaDadosRetirada:
+    post:
+      tags:
+        - usuario
+      summary: Envia dados para o reparador.
+      operationId: dadosBicicleta
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/DadosRetiradaDTO'
+      responses:
+        '200':
+          description: Email enviado com sucesso.
+        '500':
+          description: Erro ao enviar email.
 
 components:
   securitySchemes:
