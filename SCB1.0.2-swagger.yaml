@@ -27,6 +27,44 @@ tags:
   - name: aluguel
     description: Gerencia os aluguéis
 paths:
+    /equipamento/tranca/validar:
+    post:
+      tags:
+        - equipamento
+      security: 
+        - funcionarioAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrancaDTO'
+  
+      responses:
+        '201':
+          description: "Tranca incluída"
+        '400':
+          description: "Somente o funcionário responsável pelo reparo pode devolver a tranca"
+        '404':
+          description: "Número de tranca inválida"
+        
+  /usuario/funcionario/email-tranca:
+    post:
+      tags:
+        - usuario
+      security: 
+        - funcionarioAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrancaDTO'
+  
+      responses:
+        '200':
+          description: "Email enviado"
+        '500':
+          description: "Não foi possívem enviar email"
+          
   /cliente/confirmar-email/token={token}:
     put:
       tags:
@@ -217,6 +255,17 @@ components:
             data_fim:
               type: string
               format: datetime
+    TrancaDTO:
+      type: object
+      properties:
+        numero-tranca:
+          type: string
+        matricula-reparador:
+          type: string
+        data:
+          type: string
+          format: date
+    
     CriaBicicletaDTO:
       type: object
       properties:
