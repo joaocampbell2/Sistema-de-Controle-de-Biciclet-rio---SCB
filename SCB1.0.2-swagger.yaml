@@ -86,7 +86,7 @@ paths:
           
         '500':
           description: "Erro interno no sistema"
-  /equipamento/repararBicicleta{trancaId}:
+  /equipamento/reparar-bicicleta{trancaId}:
     put: 
       tags:
         - equipamento
@@ -104,7 +104,7 @@ paths:
         '400':
           description: Erro ao retirar bicicleta para reparo.
 
-  /equipamento/aposentarBicicleta{trancaId}:
+  /equipamento/aposentar-bicicleta{trancaId}:
     put: 
       tags:
         - equipamento
@@ -122,7 +122,7 @@ paths:
         '400':
           description: Erro ao aposentar bicicleta.
 
-  /funcionario/enviaDadosRetirada:
+  /funcionario/envia-dados-retirada:
     post:
       tags:
         - usuario
