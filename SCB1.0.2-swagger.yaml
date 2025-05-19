@@ -52,7 +52,6 @@ paths:
     post:
       tags:
         - usuario
-      description: 
       security: 
         - funcionarioAuth: []
       requestBody:
@@ -159,7 +158,7 @@ paths:
         '400':
           description: Erro ao aposentar bicicleta.
           
-  /equipamento/listarTrancas{totemId}:
+  /equipamento/listar-trancas/{totemId}:
     get: 
       tags:
         - equipamento
@@ -176,20 +175,19 @@ paths:
           description: Lista de tranca do totem.
           content:
             application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/TrancaDTO'
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrancaDTO'
         '400':
           description: Erro ao Listar Trancas.
           
-  /equipamento/totem/cadastra:
+  /equipamento/totem/cadastrar:
    post: 
       tags:
         - equipamento
       summary: Cadastrar novo Totem.
       operationId: cadastrarTotem
-      parameters:
       requestBody:
         required: true
         content:
@@ -202,13 +200,12 @@ paths:
           description: Cadastrado com sucesso.
           content:
             application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CriaTotenDTO:'
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CriaTotenDTO'
        
           
-  /equipamento/
 
   /funcionario/envia-dados-retirada:
     post:
