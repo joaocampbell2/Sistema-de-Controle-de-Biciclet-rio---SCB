@@ -27,17 +27,18 @@ tags:
   - name: aluguel
     description: Gerencia os aluguéis
 paths:
-    /equipamento/tranca/incluir:
+  /equipamento/tranca/incluir-token:
     post:
       tags:
         - equipamento
       security: 
         - funcionarioAuth: []
+        
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrancaDTO'
+              $ref: '#/components/schemas/TrancaTokenDTO'
   
       responses:
         '201':
@@ -47,7 +48,7 @@ paths:
         '404':
           description: "Número de tranca inválida"
         
-  /usuario/funcionario/email-tranca:
+  /usuario/funcionario/email-tranca-token:
     post:
       tags:
         - usuario
@@ -58,14 +59,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrancaDTO'
+              $ref: '#/components/schemas/TrancaTokenDTO'
   
       responses:
         '200':
           description: "Email enviado"
         '500':
           description: "Não foi possívem enviar email"
-          
   /cliente/confirmar-email/token={token}:
     put:
       tags:
@@ -87,7 +87,43 @@ paths:
           
         '500':
           description: "Erro interno no sistema"
-  /equipamento/reparar-bicicleta{trancaId}:
+  /equipamento/bicicleta/incluir-token:
+    post:
+      tags:
+        - equipamento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BicicletaTokenDTO"
+      responses:
+        '201':
+          description: "Bicicleta incluída"
+        '400':
+          description: "Somente o funcionário responsável pelo reparo pode devolver a bicicleta"
+        '404':
+          description: "Número de bicicleta inválida"
+        
+  /usuario/funcionario/email-bicicleta-token:
+    post:
+      tags:
+        - usuario
+      security: 
+        - funcionarioAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BicicletaTokenDTO'
+  
+      responses:
+        '200':
+          description: "Email enviado"
+        '500':
+          description: "Não foi possívem enviar email"  
+  
+  
+  /equipamento/reparar-bicicleta/{trancaId}:
     put: 
       tags:
         - equipamento
@@ -105,7 +141,7 @@ paths:
         '400':
           description: Erro ao retirar bicicleta para reparo.
 
-  /equipamento/aposentar-bicicleta{trancaId}:
+  /equipamento/aposentar-bicicleta/{trancaId}:
     put: 
       tags:
         - equipamento
@@ -190,9 +226,120 @@ paths:
           description: Email enviado com sucesso.
         '500':
           description: Erro ao enviar email.
-          
-  
 
+  /pagamento/cobrar-atrasos:
+    post:
+      tags:
+        - pagamento
+      summary: Cobra taxas atrasadas
+      operationId: cobrarAtrasos
+      responses:
+        '200':
+          description: Todos os usuarios com atraso devidamente cobrados.
+        '207':
+          description: Nem todos os usuários com atraso puderam ser cobrados.
+        '500':
+          description: Falha interna do servidor
+          
+  /usuario/email-atraso:
+    post:
+      tags:
+        - usuario
+      summary: Envia email com dados de cobrança de atraso
+      operationId: enviaAtraso
+      responses:
+        '200':
+          description: Email enviado com sucesso
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Falha do servidor
+  /tranca:
+    post:
+      tags:
+      - equipamento
+      security: 
+      - funcionarioAuth: []
+      summary: Cadastramento de tranca.
+      operationId: criarTranca
+      requestBody:
+        content:
+          application/json:
+            schema:
+             type: object
+             allOf:
+                - $ref: '#/components/schemas/CriaTrancaDTO'
+      responses:
+        '201':
+          description: Tranca cadastrada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/TrancaDTO'
+        '422':
+          description: Dados inválidos.
+  /trancas:        
+    get:
+      tags:
+      - equipamento
+      summary: Retorna as trancas.
+      operationId: retornarTrancas
+      responses:
+        '200':
+          description: Trancas retornadas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrancaDTO'
+  /tranca/{trancaId}:
+    put:
+      tags:
+        - equipamento
+      security:
+        - funcionarioAuth: []
+      summary: Alteração dos dados da tranca.
+      operationId: alterarDadosTranca
+      parameters:
+        - name: trancaId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CriaTrancaDTO'
+      responses:
+        '200':
+          description: Dados da tranca alterados com sucesso.
+        '404':
+          description: Tranca não existe.
+        '422':
+          description: Dados inválidos.
+    delete:
+      tags:
+        - equipamento
+      security:
+        - funcionarioAuth: []
+      summary: Remoção de tranca.
+      operationId: removeTranca
+      parameters:
+        - name: trancaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tranca deletada com sucesso.
+        '404':
+          description: Tranca não existe.
 components:
   securitySchemes:
     clienteAuth:
@@ -361,7 +508,7 @@ components:
             data_fim:
               type: string
               format: datetime
-    TrancaDTO:
+    TrancaTokenDTO:
       type: object
       properties:
         numero-tranca:
@@ -387,7 +534,17 @@ components:
           format: year
         modelo:
           type: string
-        
+          
+    BicicletaTokenDTO:
+      type: object
+      properties:
+        numero-bicicleta:
+          type: number
+        numero-tranca:
+          type: number
+        data:
+          type: string
+          format: date
     
     CriaBicicletaDTO:
       type: object
@@ -449,3 +606,36 @@ components:
       properties:
         status:
           type: string
+          
+    CobrancaDTO:
+      type: object
+      properties:
+        data-hora:
+          type: string
+          format: datetime
+        valor-extra:
+          type: number
+        cartao-de-credito:
+          $ref: '#/components/schemas/CartaoDeCreditoDTO'
+    TrancaDTO:
+      type: object
+      properties:
+          numero_tranca:
+            type: integer
+          ano:
+            type: string
+          modelo:
+            type: string
+          localizacao:
+            type: string
+            format: coordinates
+          status:
+            type: string
+            format: enum['NOVA', 'LIVRE', 'OCUPADA', 'EM_REPARO', 'APOSENTADA']
+    CriaTrancaDTO:
+        type: object
+        properties:
+          ano:
+            type: string
+          modelo:
+            type: string
