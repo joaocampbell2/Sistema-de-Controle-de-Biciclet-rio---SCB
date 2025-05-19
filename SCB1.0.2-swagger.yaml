@@ -27,7 +27,7 @@ tags:
   - name: aluguel
     description: Gerencia os aluguéis
 paths:
-    /equipamento/tranca/validar:
+    /equipamento/tranca/incluir:
     post:
       tags:
         - equipamento
