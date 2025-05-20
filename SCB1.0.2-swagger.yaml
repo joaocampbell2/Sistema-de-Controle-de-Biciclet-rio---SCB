@@ -224,6 +224,100 @@ paths:
           description: Toten deletada com sucesso.
         '404':
           description: Toten não existe.
+  
+  /equipamento/tranca/retirar:
+    post:
+      tags:
+        - equipamento
+      summary: Retirar tranca do sistema para reparo.
+      operationId: retiraTranca
+      requestBody:
+        required: true
+        content:
+          appication/json:
+            schema:
+              type: object
+              properties:
+                numero_tranca:
+                  type: string
+                funcionarioID:
+                  type: string
+              required:
+               - numero_tranca
+               - funcionarioID
+      responses:
+        '200':
+          description: Tranca retirada com sucesso e status atualizado
+        '400': 
+          description: Tranca com status invalido ou número inexistente
+        '500':
+          description: Erro ao processar retirada
+          
+  /equipamento/tranca/registra-retirada:
+    post:
+      tags:
+        - equipamento
+      summary: Registra os dados de retirada da tranca
+      operationId: registraRetiradaTranca
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numero_tranca:
+                  type: string
+                funcionarioId:
+                  type: integer
+                retirada_tranca:
+                  type: string
+                  format: datetime
+              required:
+                - numer_tranca
+                - funcionarioId
+                - retirada_tranca
+      responses:
+        '200':
+          description: Registro salvo com sucesso
+        '400': 
+          description: Dados inválidos para registro
+          
+  /funcionario/envia-dados-retirada-tranca:
+    post:
+      tags:
+        - usuario
+      summary: Envia email com os dados de retirada para o reparador
+      operationId: dadosRetiradaTranca
+      requestBody:
+        content: 
+         application/json:
+            schema: '#/components/schemas/DadosRetiradaTrancaDTO'
+      responses:
+        '200':
+          description: E-mail enviado com sucesso
+        '500':
+          description: Erro ao enviar email
+          
+  /equipamento/aposentar-tranca/{trancaId}:
+    put:
+      tags: 
+        - equipamento
+      summary: Muda o status da tranca do para aposentada 
+      operationId: aposentarTranca
+      parameters:
+        - name: trancaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Tranca aposentada com sucesso.
+        '400':
+          description: Erro ao aposentar tranca
+    
+      
 
   /funcionario/envia-dados-retirada:
     post:
@@ -625,6 +719,19 @@ components:
       properties:
         status:
           type: string
+          
+          
+    DadosRetiradaTrancaDTO:
+      type: object
+      properties:
+        numero_tranca:
+          type: string
+        funcionarioId:
+          type: integer
+        retirada_tranca:
+          type: string
+          format: datetime
+        
           
     CobrancaDTO:
       type: object
